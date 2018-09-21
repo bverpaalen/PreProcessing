@@ -3,10 +3,13 @@ import re
 filename = "tesseract_ST_9788_2015_INIT_EN.txt"
 
 enterregex=""
-#One . One space Capitale latter|non letter or start of line
+
+# No( chars oneDot chars No)
 dotregex="[^(].*\.{1}.*[^)]"
+#Tab
 tabregex ="\\t"
-#Can't be between () bugged
+
+#Chars dotregexOrTabregex
 regex = ".*("+dotregex+"|"+tabregex+")"
 
 def main(filepath):
