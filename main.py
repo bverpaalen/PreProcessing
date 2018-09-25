@@ -5,32 +5,55 @@ filename = "tesseract_ST_9788_2015_INIT_EN.txt"
 enterregex=""
 
 # No( chars oneDot chars No)
-dotregex="[^(].*\.{1}.*[^)]"
+#dotregex="[^(].*\.{1}.*[^)]"
+beforeStop = "([^\.]|[^\\t])*"
+dotregex="[^(.*]([^\.]|[^\\t])\.[^.*)]"
+#regex = ".*?([^(.*]([^\.]|[^\t])\.{1}[^.*)]|([^\.]|[^\t])\t)"
 #Tab
-tabregex ="\\t"
-
+#tabregex ="\\t"
+tabregex="([^\.]|[^\\t])\\t"
 #Chars dotregexOrTabregex
-regex = ".*("+dotregex+"|"+tabregex+")"
+regex = beforeStop+"("+dotregex+"|"+tabregex+")*"
 
 def main(filepath):
-	textObject = open(filepath,'r')
+
+	text = retrieveText(filepath)
+
+	header,body = splitText(text)
+
+	writeOutput(body)
+
+	print("Regex: " + regex)
+
+	bodyLines = re.split(regex,body)
+	headerLines = re.split(regex,header)
+
+
+	print(len(bodyLines))
+	for i in range(1,10,1):
+		if(bodyLines[i]!=None):
+			print("Line "+str(i)+": "+bodyLines[i])
+
+def retrieveText(filepath):
+	textObject = open(filepath, mode='r', encoding="utf-8")
 	text = textObject.read()
 	textObject.close()
 
-	#text = text.replace("\n","")
+	return text
 
-	writeOutput(text)
+def splitText(text):
+	splitText = text.split("\n")
 
-	lines = re.split(regex,text)
+	listHeaderText = splitText[:36]
+	listBodyText = splitText[37:]
 
-	#print(len(lines))
-	print("Regex: "+regex)
-	print(len(lines))
-	for i in range(1,10,1):
-		print("Line "+str(i)+": "+lines[i])
+	headerText = ' '.join(listHeaderText)
+	bodyText = ' '.join(listBodyText)
+
+	return headerText,bodyText
 
 def writeOutput(input):
-	output = open("output.txt","w+")
+	output = open("output.txt",mode="w+",encoding="utf-8")
 	output.write(input)
 	output.close()
 
